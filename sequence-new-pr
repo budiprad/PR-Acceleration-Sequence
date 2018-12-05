@@ -1,15 +1,22 @@
 sequenceDiagram
 participant Req as Requestor
-participant U as UAM
-participant C as Controller
-participant S as Service
-participant R as Repo
-Req->>U: authentication()
-U-->>Req: return credential
-Req->>C: POST - api/pr/create
+participant W as Form Web view
+participant M as Master Data
+participant C as PRCreationController
+participant S as PRCreationService
+participant R as PRCreationRepo
+participant E as PRCreationEntity
+Req->>W: create new form
+W-->>M: GET - api/master/all
+M-->>W: return master data
+W-->>Req: display form
+Req->>W: fill form & save as draft
+W->>C: POST - api/pr/create
 C->>S: create_pr_service(pr)
 S->>R:save_as_draft(pr)
-R->>R:insert db
-R-->>S:return id/failed
+R->>E:save()
+E-->>R:return PR
+R-->>S:return PR
 S-->>C:return PR
-C-->>Req:return PR response
+C-->>W:return PR
+W-->>Req:display response
