@@ -29,8 +29,7 @@ S->>R:update_pr_status(pr, status)
 R->>E:update()
 E-->>R:return PR
 R-->>S:return PR
-S->>N:send_email(email, msg)
-N-->>S:return response
 S-->>C:return PR
 C-->>W:return PR
 W-->>Req:display message
+S->>N:send_email(email, msg)
