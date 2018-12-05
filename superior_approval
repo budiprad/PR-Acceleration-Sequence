@@ -1,0 +1,36 @@
+sequenceDiagram
+participant Req as Requestor
+participant W as Form Web view
+participant C as SuperiorApprovalController
+participant S as SuperiorApprovalService
+participant R as SuperiorApprovalRepo
+participant E as SuperiorApprovalEntity
+participant F as File Service
+participant N as Notification
+
+Req->>W: browse file path
+W-->>Req: display file path
+Req->>W: upload file
+W->>C: POST - api/approval/upload
+C->>F: upload_approval(file)
+F-->>C: return filepath
+C->>S: approval_path_service(pr)
+S->>R:save_approval_path(pr)
+R->>E:save()
+E-->>R:return filepath
+R-->>S:return filepath
+S-->>C:return filepath
+C-->>W:return filepath
+W-->>Req:display response
+Req->>W: submit PR
+W->>C: POST - api/approval/submit
+C->>S: submit_approval(pr, status)
+S->>R:update_pr_status(pr, status)
+R->>E:update()
+E-->>R:return PR
+R-->>S:return PR
+S->>N:send_email(email, msg)
+N-->>S:return response
+S-->>C:return PR
+C-->>W:return PR
+W-->>Req:display message
