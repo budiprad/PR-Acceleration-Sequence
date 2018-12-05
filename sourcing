@@ -1,0 +1,35 @@
+sequenceDiagram
+participant Req as Requestor
+participant W as Form Web view
+participant C as SourcingController
+participant S as SourcingService
+participant R as SourcingRepo
+participant E as SourcingEntity
+participant F as File Service
+participant N as Notification
+
+Req->>W: browse file path
+W-->>Req: display file path
+Req->>W: upload file
+W->>C: POST - api/sourcing/insertPO
+C->>F: upload_quotation(file)
+F-->>C: return filepath
+C->>S: insert_po(pr, po)
+S->>R:insert_po(pr, po)
+R->>E:save()
+E-->>R:return po
+R-->>S:return po
+S-->>C:return po
+C-->>W:return po
+W-->>Req:display response
+Req->>W: complete PR
+W->>C: POST - api/approval/statuscomplete
+C->>S: update_pr_status(pr, status)
+S->>R:update_pr_status(pr, status)
+R->>E:update()
+E-->>R:return PR
+R-->>S:return PR
+S-->>C:return PR
+C-->>W:return PR
+W-->>Req:display message
+S->>N:send_email(email, msg)
