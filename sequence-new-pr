@@ -1,0 +1,15 @@
+sequenceDiagram
+participant Req as Requestor
+participant U as UAM
+participant C as Controller
+participant S as Service
+participant R as Repo
+Req->>U: authentication()
+U-->>Req: return credential
+Req->>C: POST - api/pr/create
+C->>S: create_pr_service(pr)
+S->>R:save_as_draft(pr)
+R->>R:insert db
+R-->>S:return id/failed
+S-->>C:return PR
+C-->>Req:return PR response
